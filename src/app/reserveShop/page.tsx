@@ -73,11 +73,11 @@ export default function ReserveShop() {
             Reservation
           </h1>
 
-          <div className="w-full max-w-[620px] rounded-[50px] bg-[#89a178] text-white overflow-hidden">
+          <div className="w-auto max-w-1/3 rounded-[50px] bg-[#89a178] text-white overflow-hidden">
             <div className="p-6 md:p-10">
               <div className="flex flex-col items-center">
                 <h2 className="text-3xl md:text-[56px] font-bold text-center mb-12">
-                  So/ Spa - Bangkok
+                  {massageShopName} - {massageShopProvince}
                 </h2>
 
                 <div className="w-full flex flex-col items-center">
