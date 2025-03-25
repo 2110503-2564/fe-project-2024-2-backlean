@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import MassageShopsCatalog from '@/components/MassageShopsCatalog';
 import { LinearProgress, Button } from '@mui/material';
 import Link from 'next/link';
@@ -10,32 +10,36 @@ import { useSession } from 'next-auth/react';
 
 export default function MassageShopPage() {
   const { data: session } = useSession();
-  const [massageShops, setMassageShops] = useState<any>(null);
+  const [massageShops, setMassageShops] = useState<any>([]);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchShops = async () => {
-    if (!session?.user?.token) return;
+  const fetchShops = useCallback(async () => {
     setLoading(true);
-    const shops = await getMassageshops();
-    if (session) {
-      const prof = await getUserProfile(session.user.token);
-      setProfile(prof.data);
+    
+    try {
+      const shops = await getMassageshops();
+      setMassageShops(shops);
+      if (session?.user.token) {
+        const prof = await getUserProfile(session.user.token);
+        setProfile(prof.data);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
     }
-    setMassageShops(shops);
-    setLoading(false);
-  };
+  }, [session]);
 
   useEffect(() => {
     fetchShops();
-  }, [session]);
+  }, [fetchShops]);
 
   if (loading) return <LinearProgress />;
-  if (!massageShops || !profile) return null;
 
   return (
     <main className="min-h-screen relative top-[70px] bg-[#3D5E40] px-10 py-8">
-      {profile && profile.role === 'admin' && (
+      {profile?.role === 'admin' && (
         <div className="flex justify-end pr-4 mb-2">
           <Link href="/createShop">
             <Button
