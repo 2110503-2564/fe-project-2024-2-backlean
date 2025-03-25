@@ -18,9 +18,11 @@ export default function MassageShopPage() {
     if (!session?.user?.token) return;
     setLoading(true);
     const shops = await getMassageshops();
-    const prof = await getUserProfile(session.user.token);
+    if (session) {
+      const prof = await getUserProfile(session.user.token);
+      setProfile(prof.data);
+    }
     setMassageShops(shops);
-    setProfile(prof.data);
     setLoading(false);
   };
 
@@ -33,7 +35,7 @@ export default function MassageShopPage() {
 
   return (
     <main className="min-h-screen relative top-[70px] bg-[#3D5E40] px-10 py-8">
-      {profile.role === 'admin' && (
+      {profile && profile.role === 'admin' && (
         <div className="flex justify-end pr-4 mb-2">
           <Link href="/createShop">
             <Button

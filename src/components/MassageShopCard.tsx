@@ -57,14 +57,14 @@ export default function MassageShopCard({
     }
   }, [session]);
 
-  if (!session?.user.token || !profile) return null;
-  const token = session.user.token;
-
   const [startTime, endTime] = hours.split(" - ");
   const formattedStartTime = formatTime(startTime);
   const formattedEndTime = formatTime(endTime);
 
   const handleDeleteClick = async () => {
+    if (!session?.user.token || !profile) return null;
+    const token = session.user.token;
+
     // Trigger fade-out
     setIsVisible(false);
 
@@ -107,30 +107,36 @@ export default function MassageShopCard({
                 <li>• Tel: {tel}</li>
                 <li>• Hours: {formattedStartTime} - {formattedEndTime}</li>
               </ul>
-              {profile.role === "admin" && (
+              {profile && profile.role === "admin" && (
                 <div className="absolute bottom-4 right-4">
                   <button className="text-red-500 text-3xl" onClick={handleDeleteClick}>
                     🗑️
                   </button>
                 </div>
               )}
-              <Link href={`/reserveShop?id=${id}&massageShop=${shopName}&province=${province}`}>
-                <Button
-                  sx={{
-                    width: "120px",
-                    height: "40px",
-                    backgroundColor: "#89A178",
-                    color: "white",
-                    borderRadius: "30px",
-                    fontWeight: "100",
-                    fontSize: "13px",
-                    "&:hover": { backgroundColor: "#6e8c6c" },
-                    fontFamily: "Inria Serif, serif",
-                  }}
-                >
-                  Reserve
-                </Button>
-              </Link>
+              {session?.user.token ? ( 
+                <Link href={`/reserveShop?id=${id}&massageShop=${shopName}&province=${province}`}>
+                  <Button
+                    sx={{
+                      width: "120px",
+                      height: "40px",
+                      backgroundColor: "#89A178",
+                      color: "white",
+                      borderRadius: "30px",
+                      fontWeight: "100",
+                      fontSize: "13px",
+                      "&:hover": { backgroundColor: "#6e8c6c" },
+                      fontFamily: "Inria Serif, serif",
+                    }}
+                  >
+                    Reserve
+                  </Button>
+                </Link>) : (
+                  <div className="text-[#3D5E40] font-medium">
+                    ❎ Please Sign-In to make Reservations
+                  </div>
+                )
+              } 
             </div>
           </div>
         </motion.div>
